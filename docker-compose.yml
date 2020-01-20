@@ -1,0 +1,35 @@
+version: "3"
+services:
+    app:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      ports:
+        - 9001:9000
+        - 9444:9443
+      links:
+        - mysql
+        - mongodb
+    mysql:
+      image: mysql:5.7
+      ports:
+        - 3301:3306
+      volumes:
+        - mysql-data:/var/lib/mysql
+      environment:
+        - MYSQL_DATABASE=dev
+        - MYSQL_ROOT_PASSWORD=dev
+    mongodb:
+      image: 'mongo'
+      environment:
+        - MONGO_INITDB_DATABASE=dev
+        - MONGO_INITDB_ROOT_USERNAME=dev
+        - MONGO_INITDB_ROOT_PASSWORD=dev
+      volumes:
+        - ./mongo-init:/docker-entrypoint-initdb.d:ro
+        - ./mongo-volume:/data/db
+      ports:
+        - 27017:27017
+        - 27019:27019
+volumes:
+  mysql-data:
